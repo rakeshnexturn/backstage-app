@@ -1,0 +1,64 @@
+name: Publish TechDocs Site
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+
+jobs:
+  publish-techdocs-site:
+    runs-on: ubuntu-latest
+
+    env:
+      ENTITY_NAMESPACE: 'default'
+      ENTITY_KIND: 'Component'
+      ENTITY_NAME: ''
+      # See "Get entity name from catalog-info.yaml" step below
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install techdocs-cli
+        run: sudo npm install -g @techdocs/cli
+
+      - name: Install mkdocs and mkdocs plugins
+        run: python -m pip install mkdocs==1.* mkdocs-techdocs-core==1.* markdown-inline-mermaid==1.*
+
+      - name: Install mermaid-cli
+        run: npm install -g @mermaid-js/mermaid-cli
+        
+      - name: Generate docs site
+        run: techdocs-cli generate --no-docker --verbose
+
+      - name: Get entity name from catalog-info.yaml
+        id: entity-name
+        uses: jbutcher5/read-yaml@main
+        with:
+          file: 'catalog-info.yaml'
+          key-path: '["metadata", "name"]'
+
+      - name: Set ENTITY_NAME, ENTITY_KIND env vars
+        run: |
+          echo "ENTITY_NAME=${{ steps.entity-name.outputs.data }}" >> $GITHUB_ENV
+          echo "ENTITY_KIND=`echo ${{ env.ENTITY_KIND }} | tr '[:upper:]' '[:lower:]'`" >> $GITHUB_ENV
+      
+      - name: Publish docs site via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.TECHDOCS_HOST }}
+          key: ${{ secrets.TECHDOCS_SSH_PRIVATE_KEY }}
+          username: techdocs
+          port: 2222
+          source: site
+          target: /techdocs/${{ env.ENTITY_NAMESPACE }}/${{ env.ENTITY_KIND }}/${{ env.ENTITY_NAME }}
+          strip_components: 1
+          rm: true
