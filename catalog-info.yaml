@@ -4,9 +4,9 @@ metadata:
   name: backstage-app
   description: An example of a Backstage application.
   annotations:
-    github.com/project-slug: rmorison/backstage-app
+    github.com/project-slug: rakeshvssut/backstage-app
     backstage.io/techdocs-ref: dir:.
 spec:
   type: website
-  owner: rmorison
+  owner: rakeshvssut
   lifecycle: experimental
