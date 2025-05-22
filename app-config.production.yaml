@@ -46,7 +46,7 @@ catalog:
   locations: []
 
 techdocs:
-  builder: 'external' # Alternatives - 'external'
+  builder: 'local' # Alternatives - 'external'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
     local:
