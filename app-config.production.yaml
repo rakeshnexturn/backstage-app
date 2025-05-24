@@ -43,9 +43,7 @@ auth:
         clientSecret: ${AZURE_CLIENT_SECRET}
         tenantId: ${AZURE_TENANT_ID}
         domainHint: ${AZURE_TENANT_ID}
-        signIn:
-          resolvers:
-            - resolver: userIdMatchingUserEntityAnnotation
+
 
 catalog:
   # Overrides the default list locations from app-config.yaml as these contain example data.
