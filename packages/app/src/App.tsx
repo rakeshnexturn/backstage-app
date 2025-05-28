@@ -24,6 +24,7 @@ import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
+
 import {
   microsoftAuthApiRef,
 } from '@backstage/core-plugin-api';
@@ -38,7 +39,7 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
-
+import { nexturnTheme } from './themes/nexturn-theme';
 const app = createApp({
   apis,
   bindRoutes({ bind }) {
@@ -68,6 +69,15 @@ const app = createApp({
       },
     ]} />,
   },
+  themes: [{
+    id: 'my-theme',
+    title: 'My Custom Theme',
+    variant: 'light',
+    icon: <LightIcon />,
+    Provider: ({ children }) => (
+      <UnifiedThemeProvider theme={nexturnTheme} children={children} />
+    ),
+  }] 
 });
 
 const routes = (
